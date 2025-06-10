@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodCampus Pro - Student Menu</title>
+    <style>
+        /* Your existing CSS styles go here */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); min-height: 100vh; }
+        .header { background: white; padding: 1rem 2rem; display: flex; align-items: center; gap: 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .logo { display: flex; align-items: center; gap: 0.5rem; font-size: 1.5rem; font-weight: bold; color: #333; }
+        .logo::before { content: "✕"; color: #ff6b35; font-size: 1.8rem; }
+        .nav-buttons { display: flex; gap: 1rem; }
+        .nav-btn { padding: 0.75rem 1.5rem; border: none; border-radius: 25px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; background: #ff6b35; color: white; }
+        .nav-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        .menu-header { text-align: center; margin-bottom: 2rem; }
+        .menu-title { font-size: 2.5rem; color: #333; margin-bottom: 0.5rem; }
+        .menu-subtitle { color: #666; font-size: 1.1rem; margin-bottom: 1rem; }
+        .ticket-info { display: flex; align-items: center; justify-content: center; gap: 0.5rem; color: #ff6b35; font-weight: 500; }
+        .ticket-info::before { content: "🎫"; }
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-bottom: 3rem; }
+        .menu-item { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; position: relative; }
+        .menu-item:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.15); }
+        .image-container { height: 200px; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center; overflow: hidden; } /* Changed from placeholder */
+        .image-container img { width: 100%; height: 100%; object-fit: cover; }
+        .status-badge { position: absolute; top: 12px; right: 12px; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; background: #00d084; color: white; }
+        .item-content { padding: 1.5rem; }
+        .item-title { font-size: 1.3rem; font-weight: bold; color: #333; margin-bottom: 0.5rem; }
+        .item-description { color: #666; margin-bottom: 1rem; line-height: 1.4; }
+        .item-footer { display: flex; justify-content: space-between; align-items: center; }
+        .price { font-size: 1.4rem; font-weight: bold; color: #ff6b35; }
+        .price-label { font-size: 0.8rem; color: #999; display: flex; align-items: center; gap: 0.3rem; }
+        .price-label::before { content: "⏱"; }
+        .info-section { background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+        .info-title { font-size: 1.5rem; color: #333; margin-bottom: 1rem; }
+        .info-list { list-style: none; }
+        .info-list li { padding: 0.5rem 0; color: #666; display: flex; align-items: flex-start; gap: 0.5rem; }
+        .info-list li::before { content: "•"; color: #ff6b35; font-weight: bold; margin-top: 0.2rem; }
+        /* Removed .file-input, .image-placeholder, .upload-text, .item-title-input, .item-description-input styles as they are for admin input, not display */
+        @media (max-width: 768px) {
+            .menu-grid { grid-template-columns: 1fr; }
+            .container { padding: 1rem; }
+            .header { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">FoodCampus Pro</div>
+        <div class="nav-buttons">
+            <button class="nav-btn">🍽️ Student Menu</button>
+            <a href="{% url 'accounts:logout' %}" class="nav-btn">Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="menu-header">
+            <h1 class="menu-title">Student Menu</h1>
+            <p class="menu-subtitle">Affordable meals for students - 100 FRS per ticket</p>
+            <div class="ticket-info">1 Ticket = 1 Meal</div>
+        </div>
+
+        <div class="menu-grid">
+            {% if menu_items %}
+                {% for item in menu_items %}
+                    <div class="menu-item">
+                        <div class="image-container">
+                            {% if item.image_path %}
+                                <img src="{{ item.image_path }}" alt="{{ item.name }}">
+                            {% else %}
+                                <span style="color: #999; font-size: 0.9rem;">No Image Available</span>
+                            {% endif %}
+                        </div>
+                        <div class="status-badge">{% if item.available %}Available{% else %}Unavailable{% endif %}</div>
+                        <div class="item-content">
+                            <h5 class="item-title">{{ item.name }}</h5>
+                            <p class="item-description">{{ item.description }}</p>
+                            <div class="item-footer">
+                                <span class="price">{{ item.price|floatformat:0 }} FRS</span> {# Assuming price is in FRS and you want no decimal places #}
+                                <span class="price-label">Per ticket</span>
+                            </div>
+                            {# Add a button to reserve/order if you have a reservation view #}
+                            {# Example: <a href="{% url 'reservations:make_reservation' item.id %}" class="nav-btn">Reserve</a> #}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No student menu items available today.</p>
+            {% endif %}
+        </div>
+
+        <div class="info-section">
+            <h2 class="info-title">How Student Reservations Work</h2>
+            <ul class="info-list">
+                <li>Each ticket costs {{ DailyMenu.price }} FRS and gets you one meal (adjust if price varies)</li>
+                <li>You can reserve multiple tickets for multiple meals</li>
+                <li>Payment is processed via Mobile Money (678789529) or Orange Money (656910038)</li>
+                <li>Meals are available during restaurant hours</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

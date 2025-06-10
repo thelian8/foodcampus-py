@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head><title>Home</title></head>
+<body>
+  <h1>Welcome to Food Campus Pro</h1>
+  {% if messages %}
+    {% for message in messages %}
+      <p>{{ message }}</p>
+    {% endfor %}
+  {% endif %}
+  {% if show_menu and menu_items %}
+    <h2>Available Meals</h2>
+    <ul>
+      {% for item in menu_items %}
+        <li>{{ item.name }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+</body>
+</html>

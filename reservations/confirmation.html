@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Reservation Confirmation</h2>
+<div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+    <h3>Thank You, {{ name }}!</h3>
+    <p>Your reservation has been successfully confirmed on {{ created_at|date:"F d, Y, H:i" }}.</p>
+    <p><strong>Phone Number:</strong> {{ phone_number }}</p>
+    <p><strong>Category:</strong> {{ category|title }}</p>
+    <p><strong>Menu Item:</strong> {{ menu_item }}</p>
+    <p><strong>Number of {{ item_name|title }}:</strong> {{ quantity }}</p>
+    <p>Please present this confirmation at the restaurant during operating hours.</p>
+    <a href="{% url 'reservation_list' %}" style="background-color: #f28c38; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;">View All Reservations</a>
+</div>
+{% endblock %}

@@ -1,0 +1,5 @@
+.notification-banner { background-color: #e6ffe6; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
+button { border: none; background: none; cursor: pointer; }
+h1 { color: #f28c38; }
+a { text-decoration: none; }
+img { width: 150px; height: 150px; object-fit: cover; border-radius: 5px; }
