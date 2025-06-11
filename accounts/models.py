@@ -25,7 +25,7 @@ class CustomUser(AbstractBaseUser):
     CATEGORY_CHOICES = [
         ('student', 'Student'),
         ('teacher', 'Teacher'),
-        ('admin', 'Admin'),
+        
     ]
     username = models.CharField(max_length=30, unique=True)  # Username as the unique identifier
     email = models.EmailField(blank=True, null=True)  # Optional email
