@@ -1,5 +1,10 @@
 from pathlib import Path
 import os
+import dotenv
+
+# Load environment variables from .env file
+dotenv.load_dotenv()
+
 os.environ.setdefault('PYTHONIOENCODING', 'UTF-8')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -9,14 +14,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 db_dir = os.path.dirname(os.path.join(BASE_DIR, 'db.sqlite3'))
 os.makedirs(db_dir, exist_ok=True)
 
+# Create logs directory if it doesn't exist
+LOGS_DIR = os.path.join(BASE_DIR, 'logs')
+os.makedirs(LOGS_DIR, exist_ok=True)
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-)_@t5#%7#yp*c0coyv*d+igov$+rzh3^ao*!ao+9w*&4+pg0nt"
+SECRET_KEY = os.getenv("SECRET_KEY", "a_default_fallback_key_if_not_set")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
@@ -33,6 +42,7 @@ INSTALLED_APPS = [
     'menus',
     'reservations',
     'treenode',
+    'axes',
 ]
 
 MIDDLEWARE = [
@@ -43,6 +53,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'axes.middleware.AxesMiddleware',
 ]
 
 ROOT_URLCONF = "foodcampuspro.urls"
@@ -89,6 +100,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Add Axes backend
+AUTHENTICATION_BACKENDS = [
+    'axes.backends.AxesBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
 # Internationalization
@@ -102,7 +119,10 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [
     BASE_DIR / 'reservations/static',
     BASE_DIR / 'static',
+    
     ]
+
+STATIC_ROOT = BASE_DIR / 'staticfiles_collected'
 # settings.py
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -113,8 +133,68 @@ CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     },
+    'axes': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    },
     'treenode': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    },
+}
+
+# Axes Configuration for account lockout
+AXES_FAILURE_LIMIT = 5  # Lock out after 5 failed attempts
+AXES_COOLOFF_TIME = 0.2  # Lock out for 12 minutes (0.2 hours)
+AXES_RESET_ON_SUCCESS = True # Reset failed attempts on successful login
+
+# Security settings for production (when DEBUG=False)
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+
+# Logging Configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(LOGS_DIR, 'foodcampuspro.log'),
+            'maxBytes': 1024*1024*5, # 5 MB
+            'backupCount': 2,
+            'formatter': 'verbose',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'axes': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
     },
 }
 

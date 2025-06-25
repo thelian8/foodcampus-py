@@ -8,12 +8,13 @@ class ReservationAdmin(admin.ModelAdmin):
     list_display = (
         'user',
         'menu',  # Changed from 'daily_menu' to 'menu'
+        'category',  # Added category here
         'tickets_or_plates',
         'payment_method',
         'payment_status',
         'created_at'
     )
-    list_filter = ('payment_status', 'payment_method')
+    list_filter = ('category', 'payment_status', 'payment_method')  # Added category here
     search_fields = (
         'user__username',
         'menu__name'  # Changed from 'daily_menu__menu_item__name' to 'menu__name'

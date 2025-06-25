@@ -4,6 +4,7 @@
     <title>FoodCampus Pro</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
     <header>
@@ -21,6 +22,9 @@
                 <a href="{% url 'menus:student_menu' %}">Menu</a>  {% endif %}
             <a href="{% url 'category_list' %}">Categories</a>
             {% if user.is_authenticated %}
+                {% if user.is_staff %}
+                    <a href="{% url 'menus:admin_menu_upload' %}" class="admin-link">Admin Menu</a>
+                {% endif %}
                 <a href="{% url 'accounts:logout' %}">Logout</a> {# <-- FIX: Added 'accounts:' #}
             {% else %}
                 <a href="{% url 'accounts:login' %}">Login</a>   {# <-- FIX: Added 'accounts:' #}
@@ -30,5 +34,7 @@
     </header>
     {% block content %}
     {% endblock %}
+
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

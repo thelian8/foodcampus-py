@@ -1,9 +1,8 @@
-
 from django.urls import path, include
 from . import views
 from django.contrib import admin
-from django.conf import settings  # ← ADD THIS LINE
-from django.conf.urls.static import static  # ← ADD THIS LINE
+from django.conf import settings  
+from django.conf.urls.static import static  
 
 
 urlpatterns = [
@@ -16,6 +15,8 @@ urlpatterns = [
 ]
 
 
-# Serve static files during development
+# Serve static and media files during development
 if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    

@@ -2,6 +2,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser
+import re
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(label="Email Address", required=False)
@@ -32,3 +33,9 @@ class CustomUserCreationForm(UserCreationForm):
         if not email:
             return None
         return email
+
+    def clean_phone_number(self):
+        phone = self.cleaned_data.get('phone_number')
+        if not re.fullmatch(r'6\d{8}', phone):
+            raise forms.ValidationError('Phone number must be in the format 6XXXXXXXX (must start with 6 and have 8 more digits, no country code).')
+        return phone

@@ -1,105 +1,400 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FoodCampus Pro - Student Menu</title>
-    <style>
-        /* Your existing CSS styles go here */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); min-height: 100vh; }
-        .header { background: white; padding: 1rem 2rem; display: flex; align-items: center; gap: 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .logo { display: flex; align-items: center; gap: 0.5rem; font-size: 1.5rem; font-weight: bold; color: #333; }
-        .logo::before { content: "✕"; color: #ff6b35; font-size: 1.8rem; }
-        .nav-buttons { display: flex; gap: 1rem; }
-        .nav-btn { padding: 0.75rem 1.5rem; border: none; border-radius: 25px; font-weight: 500; cursor: pointer; transition: all 0.3s ease; background: #ff6b35; color: white; }
-        .nav-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-        .menu-header { text-align: center; margin-bottom: 2rem; }
-        .menu-title { font-size: 2.5rem; color: #333; margin-bottom: 0.5rem; }
-        .menu-subtitle { color: #666; font-size: 1.1rem; margin-bottom: 1rem; }
-        .ticket-info { display: flex; align-items: center; justify-content: center; gap: 0.5rem; color: #ff6b35; font-weight: 500; }
-        .ticket-info::before { content: "🎫"; }
-        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-bottom: 3rem; }
-        .menu-item { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; position: relative; }
-        .menu-item:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.15); }
-        .image-container { height: 200px; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center; overflow: hidden; } /* Changed from placeholder */
-        .image-container img { width: 100%; height: 100%; object-fit: cover; }
-        .status-badge { position: absolute; top: 12px; right: 12px; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; background: #00d084; color: white; }
-        .item-content { padding: 1.5rem; }
-        .item-title { font-size: 1.3rem; font-weight: bold; color: #333; margin-bottom: 0.5rem; }
-        .item-description { color: #666; margin-bottom: 1rem; line-height: 1.4; }
-        .item-footer { display: flex; justify-content: space-between; align-items: center; }
-        .price { font-size: 1.4rem; font-weight: bold; color: #ff6b35; }
-        .price-label { font-size: 0.8rem; color: #999; display: flex; align-items: center; gap: 0.3rem; }
-        .price-label::before { content: "⏱"; }
-        .info-section { background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
-        .info-title { font-size: 1.5rem; color: #333; margin-bottom: 1rem; }
-        .info-list { list-style: none; }
-        .info-list li { padding: 0.5rem 0; color: #666; display: flex; align-items: flex-start; gap: 0.5rem; }
-        .info-list li::before { content: "•"; color: #ff6b35; font-weight: bold; margin-top: 0.2rem; }
-        /* Removed .file-input, .image-placeholder, .upload-text, .item-title-input, .item-description-input styles as they are for admin input, not display */
-        @media (max-width: 768px) {
-            .menu-grid { grid-template-columns: 1fr; }
-            .container { padding: 1rem; }
-            .header { padding: 1rem; }
-        }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <div class="logo">FoodCampus Pro</div>
-        <div class="nav-buttons">
-            <button class="nav-btn">🍽️ Student Menu</button>
-            <a href="{% url 'accounts:logout' %}" class="nav-btn">Logout</a>
-        </div>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Student Menu | FoodCampus Pro{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f6f9; /* Light grey background for the page */
+        color: #333;
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
+        display: flex; /* Use flexbox to center the main container */
+        justify-content: center; /* Center horizontally */
+        align-items: flex-start; /* Align to the top vertically */
+        min-height: 100vh; /* Ensure it takes full viewport height */
+    }
+
+    .menu-container {
+        width: 100%;
+        max-width: 960px; /* Max width for the main content area */
+        background-color: #ffffff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        padding: 30px;
+        box-sizing: border-box; /* Include padding in width calculation */
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .page-title {
+        color: #e67e22; /* Orange color for main titles */
+        font-size: 2.5em;
+        margin-bottom: 10px;
+    }
+
+    .page-subtitle {
+        color: #666;
+        font-size: 1.1em;
+    }
+
+    /* Reservation Details Section Styling */
+    .reservation-details {
+        background-color: #f8f9fa; /* Lighter background for the reservation section */
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 25px;
+        margin-bottom: 40px;
+        text-align: center; /* Center content within reservation details */
+    }
+
+    .reservation-details h2 {
+        color: #2c3e50;
+        font-size: 1.8em;
+        margin-bottom: 25px;
+        border-bottom: 2px solid #ccc;
+        padding-bottom: 10px;
+        display: inline-block; /* Helps in centering the border-bottom */
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+        display: flex; /* Use flexbox for label and input alignment */
+        flex-direction: column; /* Stack label and input vertically */
+        align-items: center; /* Center horizontally */
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #555;
+        font-weight: bold;
+        font-size: 1.1em;
+    }
+
+    .form-group input[type="text"],
+    .form-group select {
+        width: 100%;
+        max-width: 300px; /* Limit width of input fields */
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1em;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+        text-align: center; /* Center text inside inputs */
+    }
+
+    .payment-methods {
+        background-color: #e9ecef; /* Slightly darker background for payment */
+        border: 1px dashed #ced4da; /* Dashed border for visual separation */
+        border-radius: 5px;
+        padding: 15px;
+        max-width: 350px; /* Limit width of payment box */
+        margin: 20px auto 0 auto; /* Center the payment box */
+    }
+
+    .payment-methods p {
+        margin: 5px 0;
+        color: #495057;
+    }
+
+    .payment-methods strong {
+        color: #28a745; /* Green for phone numbers */
+        font-size: 1.1em;
+    }
+
+    .payment-methods .text-muted {
+        font-size: 0.9em;
+        color: #6c757d;
+    }
+
+    .btn-confirm-reservation {
+        background-color: #28a745; /* Green button */
+        color: white;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 5px;
+        font-size: 1.2em;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 25px;
+        display: block; /* Make it a block element to center with margin auto */
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .btn-confirm-reservation:hover {
+        background-color: #218838; /* Darker green on hover */
+    }
+
+    /* --- Separator --- */
+    hr {
+        border: 0;
+        height: 1px;
+        background: #ccc;
+        margin: 40px 0;
+    }
+
+    /* Menu Grid Styling */
+    .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid columns */
+        gap: 30px; /* Space between grid items */
+        justify-content: center; /* Center grid items if they don't fill the row */
+    }
+
+    .menu-item {
+        background-color: #ffffff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        overflow: hidden; /* Ensures image corners are rounded with parent */
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        display: flex;
+        flex-direction: column; /* Stack image, then content */
+        text-align: center; /* Center text content inside menu item */
+    }
+
+    .menu-item-image,
+    .menu-item-placeholder-image {
+        width: 100%; /* Fill the width of its parent menu-item */
+        max-width: 280px; /* Set a specific max width for the image itself */
+        height: 180px; /* Fixed height for image uniformity */
+        object-fit: cover; /* Cover will ensure the image fills the area, potentially cropping */
+        display: block; /* Remove any inline-block spacing issues */
+        margin: 0 auto; /* Center the image within its container */
+        border-bottom: 1px solid #e0e0e0; /* Separator for image */
+    }
+
+    .menu-item-placeholder-image {
+        object-fit: contain; /* Placeholder should contain, not crop */
+        background-color: #f1f2f6;
+    }
+
+    .menu-item-content {
+        padding: 20px;
+        flex-grow: 1; /* Allows content to expand and push button to bottom */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; /* Pushes action button to bottom */
+    }
+
+    .menu-item-header {
+        display: flex;
+        justify-content: space-between; /* Pushes title and price to opposite ends */
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .menu-item-title {
+        font-size: 1.5em;
+        color: #34495e;
+        margin: 0;
+        flex-grow: 1; /* Allow title to take available space */
+        text-align: left; /* Align title to left within its space */
+    }
+
+    .menu-item-price {
+        font-size: 1.4em;
+        color: #e67e22; /* Orange for prices */
+        font-weight: bold;
+        white-space: nowrap; /* Prevent price from wrapping */
+    }
+
+    .menu-item-description {
+        font-size: 0.95em;
+        color: #777;
+        margin-bottom: 15px;
+        text-align: left; /* Align description to left */
+    }
+
+    .menu-item-actions {
+        margin-top: auto; /* Pushes button to the bottom */
+        padding-top: 15px; /* Space above button */
+    }
+
+    .btn-reserve {
+        background-color: #007bff; /* Blue button */
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        font-size: 1em;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-reserve:hover {
+        background-color: #0056b3; /* Darker blue on hover */
+    }
+
+    .no-items {
+        text-align: center;
+        grid-column: 1 / -1; /* Make it span all columns */
+        padding: 50px 20px;
+        background-color: #fff3cd; /* Light yellow background */
+        border: 1px solid #ffeeba;
+        border-radius: 8px;
+        color: #856404;
+    }
+
+    .no-items h3 {
+        color: #856404;
+        margin-bottom: 10px;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="menu-container">
+    <div class="page-header">
+        <h1 class="page-title">Today's Student Menu</h1>
+        <p class="page-subtitle">Delicious meals prepared fresh daily for our students</p>
     </div>
 
-    <div class="container">
-        <div class="menu-header">
-            <h1 class="menu-title">Student Menu</h1>
-            <p class="menu-subtitle">Affordable meals for students - 100 FRS per ticket</p>
-            <div class="ticket-info">1 Ticket = 1 Meal</div>
+    <div class="reservation-details">
+        <h2>Your Reservation Details</h2>
+        <div class="form-group">
+            <label for="num_tickets">Number of Tickets:</label>
+            <select id="num_tickets" name="num_tickets">
+                {% for i in "1234567890"|make_list|slice:":15" %}
+                    <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                {% endfor %}
+            </select>
         </div>
 
-        <div class="menu-grid">
-            {% if menu_items %}
-                {% for item in menu_items %}
-                    <div class="menu-item">
-                        <div class="image-container">
-                            {% if item.image_path %}
-                                <img src="{{ item.image_path }}" alt="{{ item.name }}">
-                            {% else %}
-                                <span style="color: #999; font-size: 0.9rem;">No Image Available</span>
-                            {% endif %}
+        <div class="form-group">
+            <label for="full_name">Your Full Name:</label>
+            <input type="text" id="full_name" name="full_name" placeholder="Enter your full name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="phone_number">Phone Number:</label>
+            <input type="text" id="phone_number" name="phone_number" placeholder="6XXXXXXXX" pattern="6\d{8}" maxlength="9" required>
+        </div>
+
+        <div class="form-group">
+            <label>Payment Methods:</label>
+            <div class="payment-methods">
+                <p>Mobile Money:</p>
+                <p><strong>656910038</strong> (MTN Cameroon)</p>
+                <p><strong>678789229</strong> (Orange Cameroon)</p>
+                <p class="text-muted"><small>Please make your payment to one of these numbers.</small></p>
+            </div>
+        </div>
+
+        <button class="btn-confirm-reservation" onclick="confirmReservation()">Confirm Reservation</button>
+        <div id="reservation-success-message" style="display:none;"></div>
+    </div>
+
+    <hr> {# Using an <hr> for a visual separator #}
+
+    <div class="menu-grid">
+        {% if menu_items %}
+            {% for item in menu_items %}
+                <div class="menu-item">
+                    {# This block handles the image display #}
+                    {% if item.image %} {# Check if the admin has uploaded an image #}
+                        <img src="{{ item.image.url }}" alt="{{ item.name }}" class="menu-item-image">
+                    {% else %}
+                        {# If no image is uploaded, display the placeholder static image #}
+                        <img src="{% static 'images/no_food_available.png' %}"
+                             alt="No image available for {{ item.name }}"
+                             class="menu-item-placeholder-image">
+                    {% endif %}
+                    {# End of image display block #}
+
+                    <div class="menu-item-content">
+                        <div class="menu-item-header">
+                            <h3 class="menu-item-title">{{ item.name }}</h3>
+                            <span class="menu-item-price">frs{{ item.price }}</span>
                         </div>
-                        <div class="status-badge">{% if item.available %}Available{% else %}Unavailable{% endif %}</div>
-                        <div class="item-content">
-                            <h5 class="item-title">{{ item.name }}</h5>
-                            <p class="item-description">{{ item.description }}</p>
-                            <div class="item-footer">
-                                <span class="price">{{ item.price|floatformat:0 }} FRS</span> {# Assuming price is in FRS and you want no decimal places #}
-                                <span class="price-label">Per ticket</span>
-                            </div>
-                            {# Add a button to reserve/order if you have a reservation view #}
-                            {# Example: <a href="{% url 'reservations:make_reservation' item.id %}" class="nav-btn">Reserve</a> #}
+                        <p class="menu-item-description">{{ item.description }}</p>
+                        <div class="menu-item-actions">
+                            <button class="btn-reserve" onclick="reserveMeal('{{ item.id }}')">
+                                Select This Meal
+                            </button>
                         </div>
                     </div>
-                {% endfor %}
-            {% else %}
-                <p>No student menu items available today.</p>
-            {% endif %}
-        </div>
-
-        <div class="info-section">
-            <h2 class="info-title">How Student Reservations Work</h2>
-            <ul class="info-list">
-                <li>Each ticket costs {{ DailyMenu.price }} FRS and gets you one meal (adjust if price varies)</li>
-                <li>You can reserve multiple tickets for multiple meals</li>
-                <li>Payment is processed via Mobile Money (678789529) or Orange Money (656910038)</li>
-                <li>Meals are available during restaurant hours</li>
-            </ul>
-        </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-items">
+                <h3>No menu items available for today.</h3>
+                <p>Please check back later or contact the cafeteria staff.</p>
+            </div>
+        {% endif %}
     </div>
-</body>
-</html>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let selectedMealId = null;
+
+    function reserveMeal(itemId) {
+        selectedMealId = itemId;
+        alert(`You've selected "${document.querySelector(`.menu-item button[onclick="reserveMeal('${itemId}')"]`).closest('.menu-item-content').querySelector('.menu-item-title').innerText}". Now fill in your reservation details above.`);
+    }
+
+    function confirmReservation() {
+        const numTickets = document.getElementById('num_tickets').value;
+        const fullName = document.getElementById('full_name').value;
+        const phoneNumber = document.getElementById('phone_number').value;
+        const category = 'student';
+
+        if (!selectedMealId) {
+            alert('Please select a meal from the menu first.');
+            return;
+        }
+
+        if (!fullName.trim()) {
+            alert('Please enter your full name to confirm the reservation.');
+            return;
+        }
+        if (!/^6\d{8}$/.test(phoneNumber)) {
+            alert('Please enter a valid phone number in the format 6XXXXXXXX.');
+            return;
+        }
+
+        // Send data to backend
+        fetch('/reservations/ajax_reservation/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                num_tickets: numTickets,
+                full_name: fullName,
+                phone_number: phoneNumber,
+                meal_id: selectedMealId,
+                category: category
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showSuccessMessage();
+            } else {
+                alert('Reservation failed: ' + (data.error || 'Unknown error.'));
+            }
+        })
+        .catch(() => {
+            alert('An error occurred while saving your reservation.');
+        });
+    }
+
+    function showSuccessMessage() {
+        alert('showSuccessMessage called!');
+        let msgBox = document.getElementById('reservation-success-message');
+        msgBox.style.display = 'block';
+        msgBox.innerHTML = `<div style='margin-top:20px; padding: 20px; background: #e6ffe6; border: 2px solid #28a745; border-radius: 10px; text-align: center; color: #28a745; font-weight: bold;'>Reservation successful!<br>Thank you for your reservation. Please complete your payment to confirm.</div>`;
+    }
+</script>
+{% endblock %}

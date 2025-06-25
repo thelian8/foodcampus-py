@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Reservation
 from menus.models import DailyMenu
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 @login_required
 def make_reservation(request, daily_menu_id):
@@ -30,3 +32,33 @@ def reservation_list(request):
 def reservation_confirmation(request, reservation_id):
     reservation = get_object_or_404(Reservation, id=reservation_id, user=request.user)
     return render(request, 'reservations/reservation_confirmation.html', {'reservation': reservation})
+
+@csrf_exempt
+def ajax_reservation(request):
+    if request.method == 'POST':
+        import json
+        data = json.loads(request.body.decode('utf-8'))
+        name = data.get('full_name')
+        phone = data.get('phone_number')
+        tickets = int(data.get('num_tickets', 1))
+        menu_id = data.get('meal_id')
+        # Use the logged-in user's category if authenticated
+        if request.user.is_authenticated:
+            category = getattr(request.user, 'category', None)
+        else:
+            category = data.get('category', 'student')
+        from menus.models import DailyMenu
+        try:
+            menu = DailyMenu.objects.get(id=menu_id)
+        except DailyMenu.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Menu item not found.'}, status=400)
+        Reservation.objects.create(
+            user=request.user if request.user.is_authenticated else None,
+            menu=menu,
+            category=category,
+            tickets_or_plates=tickets,
+            payment_method='Mobile Money',
+            payment_status='pending',
+        )
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False, 'error': 'Invalid request.'}, status=400)
