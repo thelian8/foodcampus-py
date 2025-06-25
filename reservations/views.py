@@ -5,6 +5,7 @@ from .models import Reservation
 from menus.models import DailyMenu
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+import datetime
 
 @login_required
 def make_reservation(request, daily_menu_id):
@@ -62,3 +63,18 @@ def ajax_reservation(request):
         )
         return JsonResponse({'success': True})
     return JsonResponse({'success': False, 'error': 'Invalid request.'}, status=400)
+
+@login_required
+def user_reservations(request):
+    reservations = Reservation.objects.filter(user=request.user).order_by('-created_at')
+    data = [
+        {
+            'menu': r.menu.name,
+            'tickets_or_plates': r.tickets_or_plates,
+            'created_at': r.created_at.strftime('%Y-%m-%d %H:%M'),
+            'category': r.category,
+            'day_of_week': r.created_at.strftime('%A'),
+        }
+        for r in reservations
+    ]
+    return JsonResponse({'reservations': data})

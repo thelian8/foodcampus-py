@@ -81,13 +81,28 @@
     .form-group input[type="text"],
     .form-group select {
         width: 100%;
-        max-width: 300px; /* Limit width of input fields */
+        max-width: 300px;
         padding: 12px 15px;
-        border: 1px solid #ddd;
+        border: 1px solid #007bff;
         border-radius: 5px;
         font-size: 1em;
+        font-weight: bold;
+        letter-spacing: 0.5px;
         box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
-        text-align: center; /* Center text inside inputs */
+        text-align: center;
+        background-color: #2196f3;
+        color: #fff;
+        transition: border-color 0.3s, background 0.3s;
+    }
+    .form-group input[type="text"]:focus,
+    .form-group select:focus {
+        border-color: #0056b3;
+        background-color: #007bff;
+        outline: none;
+    }
+    .form-group input[type="text"]::placeholder {
+        color: rgba(255,255,255,0.8);
+        font-weight: normal;
     }
 
     .payment-methods {
@@ -253,6 +268,17 @@
 
 {% block content %}
 <div class="menu-container">
+    <div style="display: flex; justify-content: flex-end; gap: 12px; margin-bottom: 18px;">
+        <div style="background: #f4f6f9; border: 1px solid #28a745; border-radius: 8px; padding: 10px 18px; box-shadow: 0 2px 8px rgba(40,167,69,0.08);">
+            <button id="show-reservations-btn" style="background: #28a745; color: #fff; border: none; border-radius: 5px; padding: 8px 18px; font-weight: bold; cursor: pointer;">My Reservations</button>
+        </div>
+        <div style="background: #f4f6f9; border: 1px solid #e74c3c; border-radius: 8px; padding: 10px 18px; box-shadow: 0 2px 8px rgba(231,76,60,0.08);">
+            <form action="/accounts/logout/" method="post" style="margin:0;">
+                {% csrf_token %}
+                <button type="submit" style="background: #e74c3c; color: #fff; border: none; border-radius: 5px; padding: 8px 18px; font-weight: bold; cursor: pointer;">Logout</button>
+            </form>
+        </div>
+    </div>
     <div class="page-header">
         <h1 class="page-title">Today's Student Menu</h1>
         <p class="page-subtitle">Delicious meals prepared fresh daily for our students</p>
@@ -292,6 +318,13 @@
         <button class="btn-confirm-reservation" onclick="confirmReservation()">Confirm Reservation</button>
         <div id="reservation-success-message" style="display:none;"></div>
     </div>
+
+    <div id="my-reservations-modal" style="display:none; position:fixed; top:20%; left:50%; transform:translate(-50%, 0); background:#fff; border:2px solid #28a745; border-radius:10px; box-shadow:0 4px 20px rgba(0,0,0,0.2); z-index:1000; padding:30px; min-width:320px;">
+        <h3>My Reservations</h3>
+        <ul id="my-reservations-list"></ul>
+        <button onclick="closeReservationsModal()" style="margin-top:15px;">Close</button>
+    </div>
+    <div id="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.3); z-index:999;" onclick="closeReservationsModal()"></div>
 
     <hr> {# Using an <hr> for a visual separator #}
 
@@ -390,11 +423,36 @@
         });
     }
 
+    function loadMyReservations() {
+        fetch('/reservations/user_reservations/')
+            .then(response => response.json())
+            .then(data => {
+                const list = document.getElementById('my-reservations-list');
+                list.innerHTML = '';
+                if (data.reservations.length === 0) {
+                    list.innerHTML = '<li>No reservations yet.</li>';
+                } else {
+                    data.reservations.forEach(r => {
+                        list.innerHTML += `<li><strong>Name:</strong> ${r.category === 'student' ? 'Student' : 'Teacher'}<br><strong>Tickets:</strong> ${r.tickets_or_plates}<br><strong>Menu:</strong> ${r.menu}<br><strong>Day:</strong> ${r.day_of_week}<br><strong>Time:</strong> ${r.created_at}</li><hr>`;
+                    });
+                }
+            });
+    }
+    document.getElementById('show-reservations-btn').onclick = function() {
+        loadMyReservations();
+        document.getElementById('my-reservations-modal').style.display = 'block';
+        document.getElementById('modal-overlay').style.display = 'block';
+    };
+    function closeReservationsModal() {
+        document.getElementById('my-reservations-modal').style.display = 'none';
+        document.getElementById('modal-overlay').style.display = 'none';
+    }
+
     function showSuccessMessage() {
-        alert('showSuccessMessage called!');
         let msgBox = document.getElementById('reservation-success-message');
         msgBox.style.display = 'block';
         msgBox.innerHTML = `<div style='margin-top:20px; padding: 20px; background: #e6ffe6; border: 2px solid #28a745; border-radius: 10px; text-align: center; color: #28a745; font-weight: bold;'>Reservation successful!<br>Thank you for your reservation. Please complete your payment to confirm.</div>`;
+        loadMyReservations();
     }
 </script>
 {% endblock %}
