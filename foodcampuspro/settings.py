@@ -122,11 +122,7 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
     
     ]
-STORAGES = {
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-}
+
 
 STATIC_ROOT = BASE_DIR / 'staticfiles_collected'
 # settings.py
