@@ -4,3 +4,4 @@ django-axes
 gunicorn
 treenode
 django-treenode
+whitenoise
