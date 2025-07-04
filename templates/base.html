@@ -16,19 +16,22 @@
                     <a href="{% url 'menus:student_menu' %}">Menu</a>
                 {% elif user.category == 'teacher' %}
                     <a href="{% url 'menus:teacher_menu' %}">Menu</a>
-                {% else %}
-                    <a href="{% url 'menus:student_menu' %}">Menu</a>  {% endif %}
-            {% else %}
-                <a href="{% url 'menus:student_menu' %}">Menu</a>  {% endif %}
+                {% else %} {# Fallback for authenticated users with no specific category #}
+                    <a href="{% url 'menus:student_menu' %}">Menu</a>
+                {% endif %}
+            {% else %} {# For unauthenticated users #}
+                <a href="{% url 'menus:student_menu' %}">Menu</a>
+            {% endif %}
+
             
             {% if user.is_authenticated %}
                 {% if user.is_staff %}
                     <a href="{% url 'menus:admin_menu_upload' %}" class="admin-link">Admin Menu</a>
                 {% endif %}
-                <a href="{% url 'accounts:logout' %}">Logout</a> {# <-- FIX: Added 'accounts:' #}
+                <a href="{% url 'accounts:logout' %}">Logout</a>
             {% else %}
-                <a href="{% url 'accounts:login' %}">Login</a>   {# <-- FIX: Added 'accounts:' #}
-                <a href="{% url 'accounts:register' %}">Register</a> {# <-- FIX: Added 'accounts:' #}
+                <a href="{% url 'accounts:login' %}">Login</a>
+                <a href="{% url 'accounts:register' %}">Register</a>
             {% endif %}
         </nav>
     </header>
