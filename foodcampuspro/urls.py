@@ -11,7 +11,7 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('menu/', include('menus.urls')),
     path('reservations/', include('reservations.urls')),
-    path('categories/', include('categories.urls')),
+    # path('categories/', include('categories.urls')),  # Removed because the app was deleted
 ]
 
 

@@ -20,7 +20,7 @@
                     <a href="{% url 'menus:student_menu' %}">Menu</a>  {% endif %}
             {% else %}
                 <a href="{% url 'menus:student_menu' %}">Menu</a>  {% endif %}
-            <a href="{% url 'category_list' %}">Categories</a>
+            
             {% if user.is_authenticated %}
                 {% if user.is_staff %}
                     <a href="{% url 'menus:admin_menu_upload' %}" class="admin-link">Admin Menu</a>
