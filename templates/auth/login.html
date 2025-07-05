@@ -101,8 +101,13 @@
             <button type="submit" class="btn">Login</button>
         </form>
         
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="{% url 'accounts:password_reset' %}" style="color: #f28c38; text-decoration: none; font-size: 14px;">
+                Forgot your password?
+            </a>
+        </div>
+        
         <div class="links">
-            <p><a href="{% url 'password_reset' %}">Forgot your password?</a></p>
             <p>Don't have an account? <a href="/accounts/signup/">Sign up</a></p>
         </div>
     </div>
