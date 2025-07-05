@@ -5,3 +5,4 @@ gunicorn
 treenode
 django-treenode
 whitenoise
+pillow
